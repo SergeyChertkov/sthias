@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STHIAS — Space MMO Strategy</title>
+    <style>
+        /* Базовые Sci-Fi настройки */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', Courier, monospace, sans-serif;
+        }
+
+        body {
+            background-color: #030d14;
+            /* Космическая сетка на фоне, как на референсе */
+            background-image: 
+                linear-gradient(rgba(0, 242, 254, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 254, 0.03) 1px, transparent 1px),
+                radial-gradient(circle at 50% 30%, #082d38 0%, #030d14 70%);
+            background-size: 40px 40px, 40px 40px, 100% 100%;
+            color: #00f2fe;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Контейнер для переключателя языков */
+        .lang-switcher {
+			position: absolute;
+			top: 20px;
+			left: 50%;
+			transform: translateX(-50%);
+			display: flex;
+			gap: 8px;
+			z-index: 100;
+			flex-wrap: wrap;
+			justify-content: center;
+			max-width: 90%;
+		}
+
+        .lang-btn {
+            background: rgba(4, 22, 31, 0.8);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            color: rgba(0, 242, 254, 0.6);
+            padding: 4px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: all 0.2s ease-in-out;
+            clip-path: polygon(0 0, calc(100% - 4px) 0, 100% 4px, 100% 100%, 4px 100%, 0 calc(100% - 4px));
+        }
+
+        .lang-btn:hover {
+            border-color: #00f2fe;
+            color: #00f2fe;
+            background: rgba(0, 242, 254, 0.05);
+        }
+
+        .lang-btn.active {
+            border-color: #00f2fe;
+            color: #030d14;
+            background: #00f2fe;
+            box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+        }
+
+        /* Эффект свечения для текста */
+        .glow-text {
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.6), 0 0 20px rgba(0, 242, 254, 0.4);
+        }
+
+        /* Главный контейнер в стиле HUD панели */
+        .hud-panel {
+            background: rgba(4, 22, 31, 0.85);
+            border: 2px solid #00f2fe;
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.2), inset 0 0 20px rgba(0, 242, 254, 0.15);
+            max-width: 650px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            margin-top: 40px;
+            /* Делаем скошенные углы в стиле интерфейса игры */
+            clip-path: polygon(0px 20px, 20px 0px, calc(100% - 20px) 0px, 100% 20px, 100% calc(100% - 20px), calc(100% - 20px) 100%, 20px 100%, 0px calc(100% - 20px));
+        }
+
+        /* Декоративные технические маркеры по углам */
+        .hud-panel::before {
+            content: attr(data-module);
+            position: absolute;
+            top: 8px;
+            left: 25px;
+            font-size: 9px;
+            letter-spacing: 2px;
+            opacity: 0.6;
+        }
+
+        /* Логотип и название */
+        h1 {
+            font-size: 56px;
+            letter-spacing: 8px;
+            color: #ffffff;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #00f2fe;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 35px;
+            opacity: 0.8;
+        }
+
+        /* Информационный блок */
+        .description-block {
+            border-top: 1px dashed rgba(0, 242, 254, 0.4);
+            border-bottom: 1px dashed rgba(0, 242, 254, 0.4);
+            padding: 20px 0;
+            margin-bottom: 35px;
+            text-align: left;
+        }
+
+        .status-line {
+            font-size: 11px;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .description-block p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #ccefff;
+            margin-bottom: 15px;
+        }
+
+        /* Стили для списка уникальных фишек */
+        .features-list {
+            list-style: none;
+            margin-bottom: 15px;
+        }
+
+        .features-list li {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #ccefff;
+            margin-bottom: 12px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        /* Кастомный маркер-стрелочка в стиле Sci-Fi */
+        .features-list li::before {
+            content: ">";
+            position: absolute;
+            left: 0;
+            color: #00f2fe;
+            font-weight: bold;
+        }
+
+        /* Подсветка жирного текста бирюзовым неоном */
+        strong {
+            color: #00f2fe;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(0, 242, 254, 0.5);
+        }
+
+        /* Кнопки управления / ссылки */
+        .hud-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .hud-btn {
+            display: block;
+            background: rgba(0, 242, 254, 0.05);
+            border: 1px solid #00f2fe;
+            color: #00f2fe;
+            padding: 15px;
+            font-size: 16px;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: bold;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+        }
+
+        .hud-btn:hover {
+            background: #00f2fe;
+            color: #030d14;
+            box-shadow: 0 0 15px #00f2fe;
+            transform: translateY(-2px);
+        }
+
+        /* Стилизация кнопки Discord для интеграции в общую палитру */
+        .hud-btn.discord {
+            border-color: #5865F2; 
+            color: #5865F2; 
+            background: rgba(88, 101, 242, 0.03);
+        }
+
+        .hud-btn.discord:hover {
+            background: #5865F2;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(88, 101, 242, 0.6);
+        }
+
+        .hud-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Футер панели */
+        .hud-footer {
+            margin-top: 30px;
+            font-size: 10px;
+            opacity: 0.4;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Модуль выбора языков -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn" onclick="setLanguage('br')">BR</button>
+        <button class="lang-btn" onclick="setLanguage('de')">DE</button>
+        <button class="lang-btn" onclick="setLanguage('es')">ES</button>
+        <button class="lang-btn" onclick="setLanguage('fr')">FR</button>
+        <button class="lang-btn" onclick="setLanguage('id')">ID</button>
+        <button class="lang-btn" onclick="setLanguage('ru')">RU</button>
+        <button class="lang-btn" onclick="setLanguage('zh')">ZH</button>
+    </div>
+
+    <div class="hud-panel" id="hudPanel" data-module="SYSTEM MODULE // ONLINE">
+        <!-- Название и расшифровка -->
+        <h1 class="glow-text">STHIAS</h1>
+        <div class="subtitle">Stars History Ascent</div>
+
+        <!-- Секция с описанием игры -->
+        <div class="description-block">
+            <div class="status-line" id="statusLine">> INITIALIZING STRATEGIC OVERVIEW... SUCCESS</div>
+            
+            <p id="welcomeText">
+                Welcome to the bridge, Commander. <strong>STHIAS</strong> is an upcoming space browser-based MMO strategy game featuring a deep economy and a living history.
+            </p>
+
+            <ul class="features-list" id="featuresList">
+                <!-- Сюда скрипт вставит пункты на нужном языке -->
+            </ul>
+
+            <p id="closingText">
+                Take command of your empire and begin your ascent now.
+            </p>
+        </div>
+
+        <!-- Кнопки интерфейса -->
+        <div class="hud-actions">
+            <a href="#register" id="btnCbt" class="hud-btn glow-text">Apply for Closed Beta</a>
+            <a href="#discord" id="btnDiscord" class="hud-btn discord">Join Discord HQ</a>
+        </div>
+
+        <div class="hud-footer" id="hudFooter">
+            SECURE CONNECTION // PROTOCOL v0.4.1
+        </div>
+    </div>
+
+    <script>
+        // База данных локализации для 8 языков
+        const translations = {
+            ru: {
+                module: "SYSTEM MODULE // ONLINE",
+                status: "> INITIALIZING STRATEGIC OVERVIEW... SUCCESS",
+                welcome: "Добро пожаловать на капитанский мостик. <strong>STHIAS</strong> — это грядущая космическая браузерная MMO-стратегия с глубокой экономикой и живой историей.",
+                closing: "Возглавьте свою империю и начните восхождение прямо сейчас.",
+                cbt_btn: "Подать заявку на ЗБТ",
+                discord_btn: "Войти в Discord Штаб",
+                footer: "SECURE CONNECTION // PROTOCOL v0.4.1",
+                features: [
+                    "<strong>Эволюция ресурсов:</strong> Осваивайте планеты и добывайте ресурсы с уникальным плавающим тиром сырья, где чистота и ценность каждой руды динамически меняются.",
+                    "<strong>Истинная логистика:</strong> Весь сектор зависит от межпланетной торговли. Ресурсы находятся только на планетах — прокладывайте и защищайте торговые маршруты.",
+                    "<strong>Честная конкуренция:</strong> Здесь правит тактический интеллект, а не кошелек. Продуманный баланс исключает жесткий pay-to-win — победа куется в штабах и на полях сражений.",
+                    "<strong>Галактические Хроники:</strong> Впишите свое имя в вечность. Крупные битвы, смерть звезд, взлеты кланов и планетарные катаклизмы навсегда остаются в официальной летописи вселенной."
+                ]
+            },
+            en: {
+                module: "SYSTEM MODULE // ONLINE",
+                status: "> INITIALIZING STRATEGIC OVERVIEW... SUCCESS",
+                welcome: "Welcome to the bridge, Commander. <strong>STHIAS</strong> is an upcoming space browser-based MMO strategy game featuring a deep economy and a living history.",
+                closing: "Take command of your empire and begin your ascent now.",
+                cbt_btn: "Apply for Closed Beta",
+                discord_btn: "Join Discord HQ",
+                footer: "SECURE CONNECTION // PROTOCOL v0.4.1",
+                features: [
+                    "<strong>Resource Evolution:</strong> Colonize planets and extract resources with a unique floating tier system, where the purity and value of raw materials change dynamically.",
+                    "<strong>True Logistics:</strong> The entire sector relies on interplanetary trade. Resources exist only on planets — establish and defend vital supply lines.",
+                    "<strong>Fair Competition:</strong> Tactical intellect rules here, not deep pockets. Balanced design eliminates hard pay-to-win mechanics — victory is forged in war rooms and battlefields.",
+                    "<strong>Galactic Chronicles:</strong> Write your name into eternity. Massive fleet engagements, star deaths, alliance rises, and planetary cataclysms are permanently recorded in the universe's official lore."
+                ]
+            },
+            br: {
+                module: "MÓDULO DE SISTEMA // ONLINE",
+                status: "> INICIALIZANDO VISÃO ESTRATÉGICA... SUCESSO",
+                welcome: "Bem-vindo à ponte de comando. <strong>STHIAS</strong> é um futuro MMO de estratégia espacial para navegador com uma economia profunda e uma história viva.",
+                closing: "Assuma o controle do seu império e comece sua ascensão agora mesmo.",
+                cbt_btn: "Inscrever-se para o Beta Fechado",
+                discord_btn: "Entrar no QG do Discord",
+                footer: "CONEXÃO SEGURA // PROTOCOLO v0.4.1",
+                features: [
+                    "<strong>Evolução de Recursos:</strong> Colonize planetas e extraia recursos com um sistema exclusivo de tier flutuante, onde a pureza e o valor da matéria-prima mudam dinamicamente.",
+                    "<strong>Logística Real:</strong> Todo o setor depende do comércio interplanetário. Os recursos existem apenas nos planetas — trace e defenda rotas comerciais vitais.",
+                    "<strong>Competição Justa:</strong> A inteligência tática domina aqui, não a carteira. O equilíbrio refinado elimina o pay-to-win agressivo — a vitória é moldada nos quartéis-generais e nos campos de batalha.",
+                    "<strong>Crônicas Galácticas:</strong> Grave seu nome na eternidade. Grandes batalhas, mortes de estrelas, a ascensão de clãs e cataclismos planetários permanecem para sempre na história oficial do universo."
+                ]
+            },
+            id: {
+                module: "MODUL SISTEM // ONLINE",
+                status: "> MENGINISIALISASI GAMBARAN STRATEGIS... SUKSES",
+                welcome: "Selamat datang di jembatan komando. <strong>STHIAS</strong> adalah game MMO strategi luar angkasa berbasis browser mendatang yang menampilkan sistem ekonomi mendalam dan sejarah yang hidup.",
+                closing: "Pimpin kekaisaran Anda dan mulai kebangkitan Anda sekarang juga.",
+                cbt_btn: "Daftar untuk Closed Beta",
+                discord_btn: "Gabung ke Markas Discord",
+                footer: "KONEKSI AMAN // PROTOKOL v0.4.1",
+                features: [
+                    "<strong>Evolusi Sumber Daya:</strong> Kuasai planet dan tambang sumber daya dengan sistem tingkatan mengambang yang unik, di mana kemurnian dan nilai setiap bijih berubah secara dinamis.",
+                    "<strong>Logistik Nyata:</strong> Seluruh sektor bergantung pada perdagangan antarplanet. Sumber daya hanya ada di planet — bangun dan lindungi rute perdagangan vital.",
+                    "<strong>Persaingan Adil:</strong> Kecerdasan taktis yang berkuasa di sini, bukan domпет Anda. Keseimbangan yang matang menghilangkan mekanisme pay-to-win yang keras — kemenangan ditempa di markas dan medan perang.",
+                    "<strong>Kronik Galaksi:</strong> Ukir nama Anda dalam keabadian. Pertempuran armada besar, kematian bintang, kebangkitan klan, dan kataklisma planet akan tercatat selamanya dalam sejarah resmi alam semesta."
+                ]
+            },
+            es: {
+                module: "MÓDULO DE SISTEMA // EN LÍNEA",
+                status: "> INICIALIZANDO VISTA ESTRATÉGICA... ÉXITO",
+                welcome: "Bienvenido al puente de mando, Comandante. <strong>STHIAS</strong> es un próximo MMO de estrategia espacial para navegador con una economía profunda y una historia viva.",
+                closing: "Toma el mando de tu imperio y comienza tu ascenso ahora mismo.",
+                cbt_btn: "Solicitar Acceso a la Beta Cerrada",
+                discord_btn: "Unirse al Cuartel en Discord",
+                footer: "CONEXIÓN SEGURA // PROTOCOLO v0.4.1",
+                features: [
+                    "<strong>Evolución de Recursos:</strong> Coloniza planetas y extrae recursos con un sistema único de niveles flotantes, donde la pureza y el valor de las materias primas cambian dinámicamente.",
+                    "<strong>Logística Real:</strong> Todo el sector depende del comercio interplanetario. Los recursos solo están en los planetas: establece y defiende rutas comerciales vitales.",
+                    "<strong>Competencia Justa:</strong> Aquí gobierna la inteligencia táctica, no la billetera. Un diseño equilibrado elimina el pay-to-win severo: la victoria se forja en los cuarteles y campos de batalla.",
+                    "<strong>Crónicas Galácticas:</strong> Escribe tu nombre en la eternidad. Las grandes batallas navales, la muerte de estrellas, el auge de los clanes y los cataclismos planetarios quedarán grabados para siempre en los anales oficiales del universo."
+                ]
+            },
+            de: {
+                module: "SYSTEMMODUL // ONLINE",
+                status: "> INITIALISIERE STRATEGISCHE ÜBERSICHT... ERFOLGREICH",
+                welcome: "Willkommen auf der Brücke, Kommandant. <strong>STHIAS</strong> ist ein kommendes Weltraum-Browser-MMO-Strategiespiel mit einer tiefen Wirtschaft und einer lebendigen Geschichte.",
+                closing: "Übernimm das Kommando über dein Imperium und beginne jetzt deinen Aufstieg.",
+                cbt_btn: "Für Closed Beta anmelden",
+                discord_btn: "Discord-Hauptquartier beitreten",
+                footer: "SICHERE VERBINDUNG // PROTOKOLL v0.4.1",
+                features: [
+                    "<strong>Ressourcen-Evolution:</strong> Besiedle Planeten und baue Ressourcen mit einem einzigartigen fließenden Tier-System ab, bei dem sich die Reinheit und der Wert jedes Rohstoffs dynamisch ändern.",
+                    "<strong>Echte Logistik:</strong> Der gesamte Sektor hängt vom interplanetaren Handel ab. Ressourcen gibt es nur auf Planeten — errichte und verteidige lebenswichtige Handelsrouten.",
+                    "<strong>Fairer Wettbewerb:</strong> Hier regiert der taktische Verstand, nicht der Geldbeutel. Das durchdachte Balancing eliminiert hartes Pay-to-Win — der Sieg wird in den Kommandozentralen und auf den Schlachtfeldern errungen.",
+                    "<strong>Galaktische Chroniken:</strong> Schreibe deinen Namen in die Ewigkeit. Riesige Flottenschlachten, das Sterben von Sternen, der Aufstieg von Clans und planetare Kataklysmen werden für immer in den offiziellen Annalen des Universums festgehalten."
+                ]
+            },
+            fr: {
+                module: "MODULE SYSTÈME // EN LIGNE",
+                status: "> INITIALISATION DE L'APERÇU STRATÉGIQUE... SUCCÈS",
+                welcome: "Bienvenue sur le pont, Commandant. <strong>STHIAS</strong> est un futur MMO de stratégie spatiale sur navigateur doté d'une économie profonde et d'une histoire vivante.",
+                closing: "Prenez les commandes de votre empire et commencez votre ascension dès maintenant.",
+                cbt_btn: "S'inscrire à la Bêta Fermée",
+                discord_btn: "Rejoindre le QG Discord",
+                footer: "CONNEXION SÉCURISÉE // PROTOCOLE v0.4.1",
+                features: [
+                    "<strong>Évolution des Ressources:</strong> Colonisez des planètes et extrayez des ressources grâce à un système unique de paliers flottants, où la pureté et la valeur des matières premières évoluent dynamiquement.",
+                    "<strong>Logistique Réelle:</strong> Tout le secteur dépend du commerce interplanétaire. Les ressources ne se trouvent que sur les planètes — tracez et défendez des routes commerciales vitales.",
+                    "<strong>Compétition Équitable:</strong> C'est l'intelligence tactique qui domine ici, pas le portefeuille. Un équilibrage soigné élimine le pay-to-win agressif — la victoire se forge dans les états-majors et sur les champs de bataille.",
+                    "<strong>Chroniques Galactiques:</strong> Inscrivez votre nom dans l'éternité. Les grandes batailles spatiales, la mort des étoiles, l'ascension des clans et les cataclysmes planétaires restent à jamais gravés dans les annales officielles de l'univers."
+                ]
+            },
+            zh: {
+                module: "系统模块 // 在线",
+                status: "> 正在初始化战略概览... 成功",
+                welcome: "欢迎来到指挥舱，指挥官。<strong>STHIAS</strong> 是一款即将推出的太空网页 MMO 策略游戏，拥有深度的经济体系和鲜活的世界历史。",
+                closing: "掌控你的帝国，立刻开启你的崛起之路。",
+                cbt_btn: "申请封闭测试 (CBT)",
+                discord_btn: "加入 Discord 总部",
+                footer: "安全连接 // 协议 v0.4.1",
+                features: [
+                    "<strong>资源演变：</strong> 占领星球并开采资源。独特的浮动层级系统让每种矿产的纯度和价值都会发生动态变化。",
+                    "<strong>真实物流：</strong> 整个星区的运作都依赖于星际贸易。资源仅存在于行星上——你需要规划并保护至关重要的贸易航线。",
+                    "<strong>公平竞争：</strong> 在这里，统治战场的是战术智慧而非钱包。精心设计的平衡性杜绝了严重的氪金制胜（Pay-to-Win）——胜利是在指挥部和战场上铸就的。",
+                    "<strong>银河编年史：</strong> 将你的名字写入永恒。史诗般的舰队会战、恒星的毁灭、克兰（公会）的崛起以及星球大灾变，都将永远记录在宇宙的官方史册中。"
+                ]
+            }
+        };
+
+        // Функция смены языка
+        function setLanguage(lang) {
+            // Переключаем активный класс на кнопках
+            const buttons = document.querySelectorAll('.lang-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Подсвечиваем кнопку выбранного языка без зависимости от глобального event
+            buttons.forEach(btn => {
+                if (btn.getAttribute('onclick').includes("setLanguage('" + lang + "')")) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Получаем перевод для выбранного языка
+            const data = translations[lang];
+
+            // Обновляем текст на странице
+            document.getElementById('hudPanel').setAttribute('data-module', data.module);
+            document.getElementById('statusLine').innerText = data.status;
+            document.getElementById('welcomeText').innerHTML = data.welcome;
+            document.getElementById('closingText').innerText = data.closing;
+            document.getElementById('btnCbt').innerText = data.cbt_btn;
+            document.getElementById('btnDiscord').innerText = data.discord_btn;
+            document.getElementById('hudFooter').innerText = data.footer;
+
+            // Обновляем список преимуществ (features)
+            const listContainer = document.getElementById('featuresList');
+            listContainer.innerHTML = ''; // Очищаем старые пункты
+            
+            data.features.forEach(featureText => {
+                const li = document.createElement('li');
+                li.innerHTML = featureText;
+                listContainer.appendChild(li);
+            });
+
+            // Меняем атрибут lang у тега html для правильного SEO/рендеринга
+            document.documentElement.lang = lang;
+        }
+
+        // Initialize the page in English on first load
+        window.addEventListener('DOMContentLoaded', function() {
+            setLanguage('en');
+        });
+    </script>
+</body>
+</html>
