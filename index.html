@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STHIAS — Space MMO Strategy</title>
+	<link rel="icon" href="icon.png" type="image/png">
     <style>
         /* Базовые Sci-Fi настройки */
         * {
@@ -222,6 +223,19 @@
             transform: translateY(0);
         }
 
+		/* Стилизация кнопки Progress для интеграции в общую палитру */
+        .hud-btn.progress {
+            border-color: #FF8C00; 
+            color: #FF8C00; 
+            background: rgba(255, 140, 0, 0.03);
+        }
+
+		.hud-btn.progress:hover {
+            background: #FF8C00;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.6);
+        }
+
         /* Футер панели */
         .hud-footer {
             margin-top: 30px;
@@ -247,8 +261,13 @@
 
     <div class="hud-panel" id="hudPanel" data-module="SYSTEM MODULE // ONLINE">
         <!-- Название и расшифровка -->
-        <h1 class="glow-text">STHIAS</h1>
-        <div class="subtitle">Stars History Ascent</div>
+		<img src="icon.png" alt="StHiAs" width="75" height="75">
+        <h1 class="glow-text">
+			STHIAS
+		</h1>
+        <div class="subtitle">
+			Stars History Ascent
+		</div>
 
         <!-- Секция с описанием игры -->
         <div class="description-block">
@@ -268,9 +287,12 @@
         </div>
 
         <!-- Кнопки интерфейса -->
-        <div class="hud-actions">
+		<div style="display: none;">
             <a href="#register" id="btnCbt" class="hud-btn glow-text">Apply for Closed Beta</a>
-            <a href="#discord" id="btnDiscord" class="hud-btn discord">Join Discord HQ</a>
+            <a href="#discord" id="btnDiscord" class="hud-btn discord">Join Discord HQ</a>		
+        </div>
+		<div class="hud-btn progress" style="cursor: default; pointer-events: none;">
+            Development in progress
         </div>
 
         <div class="hud-footer" id="hudFooter">
@@ -286,8 +308,9 @@
     			status: "> INITIALIZING STRATEGIC OVERVIEW... SUCCESS",
     			welcome: "Ласкаво просимо на капітанський місток. <strong>STHIAS</strong> — це майбутня космічна браузерна MMO-стратегія з глибокою економікою та живою історією.",
    			 	closing: "Очольте свою імперію та почніть сходження просто зараз.",
-    			cbt_btn: "Подати заявку на ЗБТ",
-    			discord_btn: "Увійти до Discord Штабу",
+    			//cbt_btn: "Подати заявку на ЗБТ",
+    			//discord_btn: "Увійти до Discord Штабу",
+				progress_btn: "Розробка в процесі",
     			footer: "SECURE CONNECTION // PROTOCOL v0.4.1",
     			features: [
         			"<strong>Еволюція ресурсів:</strong> Освоюйте планети та видобувайте ресурси з унікальним плаваючим тиром сировини, де чистота й цінність кожної руди динамічно змінюються.",
@@ -301,8 +324,9 @@
                 status: "> INITIALIZING STRATEGIC OVERVIEW... SUCCESS",
                 welcome: "Добро пожаловать на капитанский мостик. <strong>STHIAS</strong> — это грядущая космическая браузерная MMO-стратегия с глубокой экономикой и живой историей.",
                 closing: "Возглавьте свою империю и начните восхождение прямо сейчас.",
-                cbt_btn: "Подать заявку на ЗБТ",
-                discord_btn: "Войти в Discord Штаб",
+                //cbt_btn: "Подать заявку на ЗБТ",
+                //discord_btn: "Войти в Discord Штаб",
+				progress_btn: "Разработка в процессе",
                 footer: "SECURE CONNECTION // PROTOCOL v0.4.1",
                 features: [
                     "<strong>Эволюция ресурсов:</strong> Осваивайте планеты и добывайте ресурсы с уникальным плавающим тиром сырья, где чистота и ценность каждой руды динамически меняются.",
@@ -316,8 +340,9 @@
                 status: "> INITIALIZING STRATEGIC OVERVIEW... SUCCESS",
                 welcome: "Welcome to the bridge, Commander. <strong>STHIAS</strong> is an upcoming space browser-based MMO strategy game featuring a deep economy and a living history.",
                 closing: "Take command of your empire and begin your ascent now.",
-                cbt_btn: "Apply for Closed Beta",
-                discord_btn: "Join Discord HQ",
+                //cbt_btn: "Apply for Closed Beta",
+                //discord_btn: "Join Discord HQ",
+				progress_btn: "Development in progress",
                 footer: "SECURE CONNECTION // PROTOCOL v0.4.1",
                 features: [
                     "<strong>Resource Evolution:</strong> Colonize planets and extract resources with a unique floating tier system, where the purity and value of raw materials change dynamically.",
@@ -331,8 +356,9 @@
                 status: "> INICIALIZANDO VISÃO ESTRATÉGICA... SUCESSO",
                 welcome: "Bem-vindo à ponte de comando. <strong>STHIAS</strong> é um futuro MMO de estratégia espacial para navegador com uma economia profunda e uma história viva.",
                 closing: "Assuma o controle do seu império e comece sua ascensão agora mesmo.",
-                cbt_btn: "Inscrever-se para o Beta Fechado",
-                discord_btn: "Entrar no QG do Discord",
+                //cbt_btn: "Inscrever-se para o Beta Fechado",
+                //discord_btn: "Entrar no QG do Discord",
+				progress_btn: "Desenvolvimento em progresso",
                 footer: "CONEXÃO SEGURA // PROTOCOLO v0.4.1",
                 features: [
                     "<strong>Evolução de Recursos:</strong> Colonize planetas e extraia recursos com um sistema exclusivo de tier flutuante, onde a pureza e o valor da matéria-prima mudam dinamicamente.",
@@ -346,8 +372,9 @@
                 status: "> MENGINISIALISASI GAMBARAN STRATEGIS... SUKSES",
                 welcome: "Selamat datang di jembatan komando. <strong>STHIAS</strong> adalah game MMO strategi luar angkasa berbasis browser mendatang yang menampilkan sistem ekonomi mendalam dan sejarah yang hidup.",
                 closing: "Pimpin kekaisaran Anda dan mulai kebangkitan Anda sekarang juga.",
-                cbt_btn: "Daftar untuk Closed Beta",
-                discord_btn: "Gabung ke Markas Discord",
+                //cbt_btn: "Daftar untuk Closed Beta",
+                //discord_btn: "Gabung ke Markas Discord",
+				progress_btn: "Dalam proses pengembangan",
                 footer: "KONEKSI AMAN // PROTOKOL v0.4.1",
                 features: [
                     "<strong>Evolusi Sumber Daya:</strong> Kuasai planet dan tambang sumber daya dengan sistem tingkatan mengambang yang unik, di mana kemurnian dan nilai setiap bijih berubah secara dinamis.",
@@ -361,8 +388,9 @@
                 status: "> INICIALIZANDO VISTA ESTRATÉGICA... ÉXITO",
                 welcome: "Bienvenido al puente de mando, Comandante. <strong>STHIAS</strong> es un próximo MMO de estrategia espacial para navegador con una economía profunda y una historia viva.",
                 closing: "Toma el mando de tu imperio y comienza tu ascenso ahora mismo.",
-                cbt_btn: "Solicitar Acceso a la Beta Cerrada",
-                discord_btn: "Unirse al Cuartel en Discord",
+                //cbt_btn: "Solicitar Acceso a la Beta Cerrada",
+                //discord_btn: "Unirse al Cuartel en Discord",
+				progress_btn: "Desarrollo en curso",
                 footer: "CONEXIÓN SEGURA // PROTOCOLO v0.4.1",
                 features: [
                     "<strong>Evolución de Recursos:</strong> Coloniza planetas y extrae recursos con un sistema único de niveles flotantes, donde la pureza y el valor de las materias primas cambian dinámicamente.",
@@ -376,8 +404,9 @@
                 status: "> INITIALISIERE STRATEGISCHE ÜBERSICHT... ERFOLGREICH",
                 welcome: "Willkommen auf der Brücke, Kommandant. <strong>STHIAS</strong> ist ein kommendes Weltraum-Browser-MMO-Strategiespiel mit einer tiefen Wirtschaft und einer lebendigen Geschichte.",
                 closing: "Übernimm das Kommando über dein Imperium und beginne jetzt deinen Aufstieg.",
-                cbt_btn: "Für Closed Beta anmelden",
-                discord_btn: "Discord-Hauptquartier beitreten",
+                //cbt_btn: "Für Closed Beta anmelden",
+                //discord_btn: "Discord-Hauptquartier beitreten",
+				progress_btn: "Entwicklung läuft",
                 footer: "SICHERE VERBINDUNG // PROTOKOLL v0.4.1",
                 features: [
                     "<strong>Ressourcen-Evolution:</strong> Besiedle Planeten und baue Ressourcen mit einem einzigartigen fließenden Tier-System ab, bei dem sich die Reinheit und der Wert jedes Rohstoffs dynamisch ändern.",
@@ -391,8 +420,9 @@
                 status: "> INITIALISATION DE L'APERÇU STRATÉGIQUE... SUCCÈS",
                 welcome: "Bienvenue sur le pont, Commandant. <strong>STHIAS</strong> est un futur MMO de stratégie spatiale sur navigateur doté d'une économie profonde et d'une histoire vivante.",
                 closing: "Prenez les commandes de votre empire et commencez votre ascension dès maintenant.",
-                cbt_btn: "S'inscrire à la Bêta Fermée",
-                discord_btn: "Rejoindre le QG Discord",
+                //cbt_btn: "S'inscrire à la Bêta Fermée",
+                //discord_btn: "Rejoindre le QG Discord",
+				progress_btn: "Développement en cours",
                 footer: "CONNEXION SÉCURISÉE // PROTOCOLE v0.4.1",
                 features: [
                     "<strong>Évolution des Ressources:</strong> Colonisez des planètes et extrayez des ressources grâce à un système unique de paliers flottants, où la pureté et la valeur des matières premières évoluent dynamiquement.",
@@ -406,8 +436,9 @@
                 status: "> 正在初始化战略概览... 成功",
                 welcome: "欢迎来到指挥舱，指挥官。<strong>STHIAS</strong> 是一款即将推出的太空网页 MMO 策略游戏，拥有深度的经济体系和鲜活的世界历史。",
                 closing: "掌控你的帝国，立刻开启你的崛起之路。",
-                cbt_btn: "申请封闭测试 (CBT)",
-                discord_btn: "加入 Discord 总部",
+                //cbt_btn: "申请封闭测试 (CBT)",
+                //discord_btn: "加入 Discord 总部",
+				progress_btn: "开发中",
                 footer: "安全连接 // 协议 v0.4.1",
                 features: [
                     "<strong>资源演变：</strong> 占领星球并开采资源。独特的浮动层级系统让每种矿产的纯度和价值都会发生动态变化。",
@@ -439,8 +470,9 @@
             document.getElementById('statusLine').innerText = data.status;
             document.getElementById('welcomeText').innerHTML = data.welcome;
             document.getElementById('closingText').innerText = data.closing;
-            document.getElementById('btnCbt').innerText = data.cbt_btn;
-            document.getElementById('btnDiscord').innerText = data.discord_btn;
+            //document.getElementById('btnCbt').innerText = data.cbt_btn;
+            //document.getElementById('btnDiscord').innerText = data.discord_btn;
+			document.getElementById('btnProgress').innerText = data.progress_btn;
             document.getElementById('hudFooter').innerText = data.footer;
 
             // Обновляем список преимуществ (features)
